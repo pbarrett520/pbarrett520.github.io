@@ -34,19 +34,19 @@ Analytically minded motivated professional with knowledge of Python for data ana
 
 ## Professional Experience
 
-### Invisible Technologies ⋅ USA Remote (February 2024 - Present)
-#### Quality Analyst – Python Programming
+#### Invisible Technologies ⋅ USA Remote (February 2024 - Present)
+### Quality Analyst – Python Programming
 Promoted within one month to review code submissions of agents working to write Python training data for an LLM. Ensures that agents’ Python examples are PEP8 compliant, testable, executable, and in line with clients’ expectations.
 - **Data Analysis:** Maintain and evaluate KPI metrics to identify top performing agents or agents who need coaching.
 - **Prompting Technique Development:** Advise agents on how to best create prompts that continue to push the limits of the model’s coding abilities.
 - **Coaching:** Regularly meet with agents to answer their questions, advise on how to implement best practices, and further their continuous development.
 - **Leadership:** Prepare and deliver team training and prepare statistical snapshots for weekly team syncs.
 
-#### Advanced AI Data Trainer - Coding
+### Advanced AI Data Trainer - Coding
 Promoted within 2 months to create examples of clean, testable, and executable code to train the client’s LLM. Coded Python examples making sure that all code was Pythonic and PEP compliant. Greatly expanded the client’s LLM’s domain expertise in Natural Language Processing (NLP) by using my NLP expertise to show examples of how to accomplish various NLP tasks such as calculating TF-IDF values, tokenization, and vectorization.
 
-### Zmack! Consulting ⋅ Shanghai, China (January 2022 – July 2023)
-#### Project Manager and Software Engineer
+#### Zmack! Consulting ⋅ Shanghai, China (January 2022 – July 2023)
+### Project Manager and Software Engineer
 Designed and developed Python software tools for Shanghai's pioneering AI-driven improvised comedy show by using Transformers and Tkinter. Planned and oversaw the project while creating and maintaining software tools.
 - **Leadership:** Recruited, trained, and coached an intercultural team of improv actors.
 - **Public Speaking:** Presented ideas clearly and engagingly in large group settings to build consensus on key decisions.
