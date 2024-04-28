@@ -34,7 +34,7 @@ Analytically minded motivated professional with knowledge of Python for data ana
 
 ## Professional Experience
 
-#### Invisible Technologies ⋅ USA Remote (February 2024 - Present)
+### Invisible Technologies ⋅ USA Remote (February 2024 - Present)
 ### Quality Analyst – Python Programming
 Promoted within one month to review code submissions of agents working to write Python training data for an LLM. Ensures that agents’ Python examples are PEP8 compliant, testable, executable, and in line with clients’ expectations.
 - **Data Analysis:** Maintain and evaluate KPI metrics to identify top performing agents or agents who need coaching.
@@ -45,7 +45,16 @@ Promoted within one month to review code submissions of agents working to write 
 ### Advanced AI Data Trainer - Coding
 Promoted within 2 months to create examples of clean, testable, and executable code to train the client’s LLM. Coded Python examples making sure that all code was Pythonic and PEP compliant. Greatly expanded the client’s LLM’s domain expertise in Natural Language Processing (NLP) by using my NLP expertise to show examples of how to accomplish various NLP tasks such as calculating TF-IDF values, tokenization, and vectorization.
 
-#### Zmack! Consulting ⋅ Shanghai, China (January 2022 – July 2023)
+### Advanced AI Data Trainer - Chatbot Conversations
+Specialized in leveraging Reinforcement Learning from Human Feedback (RLHF) and prompt engineering to optimize the performance of Large Language Models (LLMs). My role encompassed the development and refinement of training techniques, enhancing model accuracy and responsiveness through targeted feedback and empirical analysis.
+
+Streamlined data annotation and prompt engineering processes, reducing model training times while improving output quality. Later codified these process improvements into a training document for company wide use. Consistently exceeded performance metrics for task handling time and task quality.
+
+- **RLHF Techniques:** Implemented and refined strategies to improve AI learning processes and output quality.
+- **Prompt Engineering:** Crafted and optimized prompts to enhance model interaction and performance.
+- **Collaboration and Performance Enhancement:** Worked closely with a global team of trainers, sharing insights and strategies to drive model improvement.
+
+### Zmack! Consulting ⋅ Shanghai, China (January 2022 – July 2023)
 ### Project Manager and Software Engineer
 Designed and developed Python software tools for Shanghai's pioneering AI-driven improvised comedy show by using Transformers and Tkinter. Planned and oversaw the project while creating and maintaining software tools.
 - **Leadership:** Recruited, trained, and coached an intercultural team of improv actors.
