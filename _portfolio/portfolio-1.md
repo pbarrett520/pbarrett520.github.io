@@ -95,7 +95,7 @@ It’s a simple implementation that uses generator expressions to implement vect
 
 In improv theatre, there is a simple adage of “Yes, and…”. This basically means that any idea an improviser produces can be built upon incrementally. While this philosophy of creative generativity is essential to improv, it is also widely advantageous for many other pursuits. During my time as an AI Data Trainer, I would often try to “Yes, And” my code ideas. So, after writing the cosine similarity implementation above, I asked myself, “Yes, this code calculates the cosine similarity of two vectors and… what else?” The answer I landed on was, “This code calculates the cosine similarity of two vectors and takes Chinese character stroke decompositions as inputs.” More clearly, the goal of this next Python example is to use stroke decompositions of Chinese characters to create feature vectors, and then find the cosine similarity of those two feature vectors. Having spent many semesters in my undergrad studying Chinese and over 6 years living and working in China, Chinese has become my second language and is somewhat of a fascination of mine. Before explaining further, it’s important to understand a little bit about how the Chinese writing system works.
 
-Basically, there are 33 basic constituents or “strokes” that can be used to build any given Chinese character. These strokes are written and combined in a specific order. When a character’s strokes are put into a list in order of how they are written this is called a “stroke decomposition”. Since each character is a unique combination of strokes and the lists are ordered, this means a character’s stroke decomposition can be looked at like a “signature”.  For example, the character 来 (lái) which means “come” breaks down to `["一", "丨", "八", "一", "丷"]` whereas 请 (qíng) meaning “please” breaks down to `["㇊", "丶", "龶", "冂", "二"]`. I decided that if these unique signatures could be ascribed numerical values, one might be able to do something useful with them. Mindful that I had only an hour and a half to implement this, I achieved this but creating a toy integer encoding table, like this:
+Basically, there are 33 basic constituents or “strokes” that can be used to build any given Chinese character. These strokes are written and combined in a specific order. When a character’s strokes are put into a list in order of how they are written this is called a “stroke decomposition”. Since each character is a unique combination of strokes and the lists are ordered, this means a character’s stroke decomposition can be looked at like a “signature”.  For example, the character 来 (lái) which means “come” breaks down to `["一", "丨", "八", "一", "丷"]` whereas 请 (qíng) meaning “please” breaks down to `["㇊", "丶", "龶", "冂", "二"]`. I decided that if these unique signatures could be ascribed numerical values, one might be able to do something useful with them. Mindful that I had only an hour and a half to implement this, I achieved this by creating a toy integer encoding table, like this:
 
 ```python
 stroke_encodings = {
@@ -241,6 +241,7 @@ except ValueError as e:
 ```
 
 My earlier cosine similarity implementation forms the basis for this code, in addition to logic for parsing the inputs into integer vectors. The crudeness of the encoding scheme makes me wonder how meaningful the outputs of this function are, but it is good proof of concept if nothing else.
+
 I knew that this idea could be fleshed out a lot more, so I said “Yes, And” to the idea once more and landed on the idea of possibly using this as a language teaching tool. There can be a significant difference between the traditional and simplified versions of Chinese characters. Having a way to quantify approximately how different a simplified character is from its traditional counterpart could be useful information for language learners. This information could help learners prioritize which simplified to traditional pairings to study. It could even help native speakers who are transitioning between locales where one writing standard is promoted over the other. Knowing that I was now intrigued with this idea and wanted to revisit it more in the future, I went out of my way to make it modular and extensible. I knew for an application like this to be viable, it would need a database of stroke decompositions. I decided to go ahead and define what those data entries should look like by writing a class that took JSON strings as input in the following format:
 
 ```json
@@ -500,11 +501,214 @@ except ValueError as e:
 ```
 
 The core functionality of finding the cosine similarity of two feature vectors is still there in the `find_similarity `method, but I altered the method to only take a single simplified character as input and return the cosine similarity of it and its traditional analouge. I also wrote a method for adding new vocabulary items, which could be used iteratively to add multiple items from a database someday. I also wrote a private method called `_extract_vectors` to pull the integer vectors out of the complex data structure the class is designed to work with. Again, the encoding scheme needs to be refined somehow and the code needs to be optimized, but this is gradually getting closer and closer to being polished. I look forward to working on this project more when I have more free time to do experiments like this.
-Another fun thing we learned in the HLT program was how search indexes work and statistical concepts like tf-idf (the product of term frequency and inverse document frequency). I enjoyed studying this for my coursework, so I thought it would be fun to code up an example of a function that uses tf-idf to show the model. Here’s what I came up with:
+
+Another interesting thing we learned in the HLT program was how search indexes work and statistical concepts like tf-idf (the product of term frequency and inverse document frequency) work. Tf-idf is a foundational concept in NLP for understanding how search engines analyze web content. I enjoyed studying this for my coursework because it really helped demystified how Google works (though their proprietary methods are obviously much more complex).  I think that’s pretty cool, so I thought it would be fun to code up an example of a function that uses tf-idf to show the client’s LLM. Here’s what I came up with:
 
 ```python
+from math import log
+from collections import Counter
 
+
+def tokenize(text: str) -> str:
+
+    puncts = set("!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~")
+
+    no_punct = "".join([char.lower() if char not in puncts else " " for char in text])
+
+    return no_punct.split()
+
+
+def find_tf(tokenized_document: list[str]) -> dict[str, float]:
+
+    tf_values = Counter(tokenized_document)
+
+    total_words = len(tokenized_document)
+
+    return {word: count / total_words for word, count in tf_values.items()}
+
+
+def find_df(tokenized_corpus: list[list[str]]) -> dict[str, int]:
+
+    df = Counter()
+
+    for document in tokenized_corpus:
+        unique_terms = set(document)
+        df.update(unique_terms)
+
+    return dict(df)
+
+
+def make_tf_idf_table(corpus: list[tuple[int, str]]) -> list[dict[str, float]]:
+
+    if not corpus:
+        raise ValueError("Cannot perform operations on an empty corpus.")
+
+    for doc in corpus:
+        if not doc:
+            raise ValueError("Corpus contains empty element(s).")
+
+    tokenized_corpus = [tokenize(doc[1]) for doc in corpus]
+
+    tfs = [find_tf(doc) for doc in tokenized_corpus]
+    dfs = find_df(tokenized_corpus)
+    corpus_length = len(tokenized_corpus)
+
+    idfs = {word: log(corpus_length / frequency) for word, frequency in dfs.items()}
+
+    tf_idf_table = [
+        {word: tf[word] * idfs[word] for word in doc}
+        for doc, tf in zip(tokenized_corpus, tfs)
+    ]
+
+    return tf_idf_table
+
+
+from math import isclose
+
+corpus = [
+    (0, 'Jane said,"Look,look. I see a big yellow ear. See the yellow ear go.'),
+    (
+        1,
+        'Sally said, "I see it. I see the big yellow ear. I want to go away in it. I want to go away, away."',
+    ),
+    (
+        2,
+        'Dick said, "Look up, Sally. You can see something. It is red and yellow. It can go up, up, up. It can go away."',
+    ),
+]
+
+
+# TEST
+assert make_tf_idf_table(corpus) == [
+    {
+        "jane": 0.07324081924454065,
+        "said": 0.0,
+        "look": 0.05406201441442192,
+        "i": 0.02703100720721096,
+        "see": 0.0,
+        "a": 0.07324081924454065,
+        "big": 0.02703100720721096,
+        "yellow": 0.0,
+        "ear": 0.05406201441442192,
+        "the": 0.02703100720721096,
+        "go": 0.0,
+    },
+    {
+        "sally": 0.016894379504506847,
+        "said": 0.0,
+        "i": 0.06757751801802739,
+        "see": 0.0,
+        "it": 0.033788759009013694,
+        "the": 0.016894379504506847,
+        "big": 0.016894379504506847,
+        "yellow": 0.0,
+        "ear": 0.016894379504506847,
+        "want": 0.0915510240556758,
+        "to": 0.0915510240556758,
+        "go": 0.0,
+        "away": 0.05068313851352055,
+        "in": 0.0457755120278379,
+    },
+    {
+        "dick": 0.0457755120278379,
+        "said": 0.0,
+        "look": 0.016894379504506847,
+        "up": 0.1831020481113516,
+        "sally": 0.016894379504506847,
+        "you": 0.0457755120278379,
+        "can": 0.13732653608351372,
+        "see": 0.0,
+        "something": 0.0457755120278379,
+        "it": 0.05068313851352055,
+        "is": 0.0457755120278379,
+        "red": 0.0457755120278379,
+        "and": 0.0457755120278379,
+        "yellow": 0.0,
+        "go": 0.0,
+        "away": 0.016894379504506847,
+    },
+]
+# END TEST
+
+# TEST
+expected_output = [
+    {
+        "jane": 0.07324081924454065,
+        "said": 0.0,
+        "look": 0.05406201441442192,
+        "i": 0.02703100720721096,
+        "see": 0.0,
+        "a": 0.07324081924454065,
+        "big": 0.02703100720721096,
+        "yellow": 0.0,
+        "ear": 0.05406201441442192,
+        "the": 0.02703100720721096,
+        "go": 0.0,
+    },
+    {
+        "sally": 0.016894379504506847,
+        "said": 0.0,
+        "i": 0.06757751801802739,
+        "see": 0.0,
+        "it": 0.033788759009013694,
+        "the": 0.016894379504506847,
+        "big": 0.016894379504506847,
+        "yellow": 0.0,
+        "ear": 0.016894379504506847,
+        "want": 0.0915510240556758,
+        "to": 0.0915510240556758,
+        "go": 0.0,
+        "away": 0.05068313851352055,
+        "in": 0.0457755120278379,
+    },
+    {
+        "dick": 0.0457755120278379,
+        "said": 0.0,
+        "look": 0.016894379504506847,
+        "up": 0.1831020481113516,
+        "sally": 0.016894379504506847,
+        "you": 0.0457755120278379,
+        "can": 0.13732653608351372,
+        "see": 0.0,
+        "something": 0.0457755120278379,
+        "it": 0.05068313851352055,
+        "is": 0.0457755120278379,
+        "red": 0.0457755120278379,
+        "and": 0.0457755120278379,
+        "yellow": 0.0,
+        "go": 0.0,
+        "away": 0.016894379504506847,
+    },
+]
+
+
+actual_output = make_tf_idf_table(corpus)
+for doc_actual, doc_expected in zip(actual_output, expected_output):
+    for word, expected_value in doc_expected.items():
+        actual_value = doc_actual.get(word, 0)
+
+        assert isclose(actual_value, expected_value)
+# END TEST
+
+# TEST
+try:
+    make_tf_idf_table([])
+    assert False
+except ValueError as e:
+    assert str(e) == "Cannot perform operations on an empty corpus."
+# END TEST
+
+# TEST
+try:
+    make_tf_idf_table([["Hello"], []])
+    assert False
+except ValueError as e:
+    assert str(e) == "Corpus contains empty element(s)."
+# END TEST
 ```
+
+Since the intent behind this piece of code was to toy with the concept of tf-idf, I thought it would be neat to write a function that calculates the tf-idf of every word in a corpus and returns them in a Python dictionary. This required the use of multiple helper functions, so an object-oriented approach might have been better here. If I ever come back to this little project, one of the first things I’d do to refactor the above code would be turning it into a class.
+
 Tokenizers are another fundamental NLP concept I was exposed to during my studies at UAZ. Tokenizers are complex pieces of software, and implementing a good tokenizer in an hour and a half is basically impossible. But, it is possible to write a toy tokenizer in that amount of time. Here is a Python function that tokenizes English copulas (“to be” verbs). While it’s functionality is somewhat narrow, I am proud that it accounts for (most) contractions, including negative contractions. I didn’t have time to implement something that effectively distinguishes between an apostrophe “s” being used as a contraction for “is” and apostrophe “s” being used as a possessive, but the copula tokenizer covers most other edge cases I could think of at the time. The regexes aren’t clever, but they get the job done. Here is the code:
 
 ```python
