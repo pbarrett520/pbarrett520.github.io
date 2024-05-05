@@ -187,3 +187,5 @@ Similarly, num_mels, which is the number of number of Mel spectrogram dimensions
 These two are fundamental components in designing a text-to-speech system but they may need adjusting depending on factors such as languages or desired output qualities. We don't necessarily know what those are when it comes to Esperanto, so it's worth exploring. Such decisions are based on these technical considerations which straddle the complex nature of TTS system design.
 
 In the course of this experiment, I learned the ins and outs of how to train a modern, neural TTS model, as well as how to use the UAZ HPC. This subspecialty of Natural Language Processing really is a blast. It’s always so much fun opening the .wav file for the output and seeing what you get! I definitely plan to delve deeper into this realm of NLP and do more experiments in the future.
+
+All code and data associated with this project can be found at [this](https://github.com/pbarrett520/VITS_esperanto) Github repo!
