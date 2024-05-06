@@ -1,6 +1,6 @@
 ---
 title: "Data Factory: My Experiences Training Industrial Scale A.I."
-excerpt: excerpt: "<br/><img src='/images/data-factory.jpg'>"
+excerpt: "<br/><img src='./images/data-factory.jpg'>"
 collection: portfolio
 ---
 

@@ -1,191 +1,993 @@
 ---
-title: "Using  VITS on Coqui TTS to Train and Compare Two Esperanto Models"
-excerpt: "<br/><img src='/images/tts-image.jpg'>"
+title: "Using VITS on Coqui TTS to Train and Compare Two Esperanto Models"
+excerpt: "<br/><img src='./images/tts-image.jpg'>"
 collection: portfolio
 ---
 
-The basic idea behind this project is very simple. Two Esperanto text-to-speech (TTS) models were trained using the 6/3/2019 version of the Common Voice Esperanto dataset. The dataset contains 446.9 MB of data, including 14 hours of validated recordings. The training parameters for each model were identical, and are shown below:
+I am proud to say that I was able to complete my internship hours for University of Arizona’s (UAZ) Master of Science in Human Language Technology (HLT) program while working full-time at Invisible Technologies. It has been an eye -opening experience that has allowed me to learn what industrial scale LLM training looks like from the ground floor. Reinforcement learning from human feedback (or “hand-training”) is a nuanced process that involves many different moving parts. While many of the subtleties of what I learned are proprietary, a very high-level overview of what’s involved in a generic sense can be given.
+One of the biggest bottlenecks in the world of AI is training data. There is a vast amount of training data to be had on the internet, but sadly, it is finite. As LLMs become larger, they need more and more data to be trained on. When there is no more natural data to be had, data must then be manufactured. Creating clean, useful data to train the client’s LLM with was my primary responsibility as an Advanced AI Data Trainer. At first, my job was to generate prose examples to help train an LLM to perform better in general. Later, I was promoted to a project where I generated code examples to show the client’s LLM how to program in Python according to professionally accepted best practices. 
+
+Working with the prose-based data was fun. I got to write creatively and that’s always entertaining. Professionally, the interesting part was seeing the myriad rubrics and guidelines used to ensure alignment with the client’s expectations. The way the process worked was the LLM would say something, it would get flagged, and then we would write a “better” version of the flagged response. The high level of subjectivity involved makes this difficult. In most cases, no two people will qualify a piece of prose the same way. So, observing the inherently subjective process of writing prose to correct an LLM be governed by a set of objective criteria was interesting. While disputes about what may or may not be appropriate for the LLM to say were not uncommon, I have to say that everyone was mostly on the same page, which was remarkable. I think a lot of what helped was regular trainings to help cement the client’s expectations into the trainer’s minds. Certain kinds of errors or irregularities in the LLMs output were also referred to with a common vocabulary everyone was taught to use, which helped communication enormously. The whole operation is a testament to the power of standardization.
+
+Later, I was invited to work on another project to write Python coding examples. While it still has its challenges, working to create code examples is a more straightforward process than creating prose examples. Unlike the endless rabbit hole of subjectivity that prose inhabits, code already has well accepted professional standards and guidelines. So, in this way, we can see that good code to show an LLM as a training example is synonymous with good code in any other professional context. A test-based development approach should be adopted, making sure that the code runs or throws the appropriate exception in any given situation. This also means taking care to validate inputs and really thinking about possible edge cases. For Python in particular, this also means ensuring that the code is PEP8 compliant. Originality is also very important. Any code written to give to the model as a training example must come from the trainer’s own mind and must be suitably complex. So, nothing from Github is allowed, nor are implementations of common coding challenges (palindrome checkers, fizz-buzz, etc.) unless they have some original twist.
+Indeed, one of the toughest parts of this job is the constant creative pressure. Throughput is also essential, so the expectation is that trainers produce a finished Python example once every hour and a half. After a while, that can take a real mental toll on a person. Luckily, I found that my training in natural language processing (NLP) techniques given to me by the amazing faculty who teach the HLT program at UAZ left me uniquely well equipped for this challenge. NLP is a niche field. So, if you have the passion and imagination, it’s not hard to dream up original NLP ideas that can be implemented in an hour and a half. I will show you a few of my favorite examples and explain how they relate to what I learned during my studies at UAZ.
+
+One of the things we learned early in the HLT program was basic linear algebra. So one day, I decided to write a function to calculate cosine similarity. This operation builds upon other linear algebra operations like finding the dot product and finding the magnitude of a vector, so it was complex enough to be permissible. Since third party libraries aren’t allowed in our examples, implementing cosine similarity without numpy also added to the relative complexity of the task. Here is my implementation, with some tests bundled in:
 
 ```python
-#here are the Esperanto characters
-characters = CharactersConfig(
-    characters="KoNtndOzŜheĉĴmsuPEĜŝIDZaĈjJSŭFlkTĥULgMHvĤpĝbRBGrCifĵcVA",
-    punctuations=".',\"(—! );-?:",
-    characters_class="TTS.tts.models.vits.VitsCharacters",
-    pad="<PAD>",
-)
+def find_magnitude(vector: list[float]) -> float:
 
-dataset_config = BaseDatasetConfig(
-    formatter="ljspeech",
-    meta_file_train="metadata.csv",
-    path=os.path.join(output_path,"/home/u6/pbarrett520/vits")
-)
+    return (sum(x * x for x in vector)) ** 0.5
 
-audio_config = BaseAudioConfig(
-    sample_rate=22050,
-    win_length=1024,
-    hop_length=256,
-    num_mels=80,
-    preemphasis=0.0,
-    ref_level_db=20,
-    log_func="np.log",
-    do_trim_silence=True,
-    trim_db=45,
-    mel_fmin=0,
-    mel_fmax=None,
-    spec_gain=1.0,
-    signal_norm=False,
-    do_amp_to_db_linear=False,
-)
 
-config = VitsConfig(
-    characters=characters,
-    audio=audio_config,
-    run_name="vits_esperanto",
-    batch_size=16,
-    eval_batch_size=16,
-    batch_group_size=5,
-    num_loader_workers=0,
-    num_eval_loader_workers=2,
-    run_eval=True,
-    test_delay_epochs=-1,
-    epochs=300,
-    text_cleaner="basic_cleaners",
-    use_phonemes=False,
-    compute_input_seq_cache=True,
-    print_step=25,
-    print_eval=True,
-    mixed_precision=True,
-    output_path=output_path,
-    datasets=[dataset_config],
-    test_sentences=[
-        ["Mi sentas la mankon de vi."],
-        ["Kiel vi povas fari tion al mi?"],
-        ["Mi ŝatasrenkonti novajn homojn."]
-    ],
-)
-```
+def find_cosine_similarity(
+    vector1: list[float], vector2: list[float], pad: bool
+) -> float:
 
-Where these two models differ is in the metadata files used to annotate the audio recordings. One file, `no_punct.csv`, has had all punctuation characters stripped out of it using a simple Python script called `no_punct.py`, shown here:
+    if not vector1 or not vector2:
+        raise ValueError("Cannot compute cosine similarity of empty vector(s).")
 
-```python
-input_file_path = "metadata.csv"
-output_file_path = '/Users/patrick/Documents/speech_tech_final/no_punct.csv'
+    if sum(vector1) + sum(vector2) == 0:
+        raise ValueError(
+            "Both vectors populated only by value '0', unable to divide zero by zero."
+        )
 
-chars_to_remove = r".',\"(—!);-?:" # target characters to be removed
+    if pad:
+        length_difference = abs(len(vector1) - len(vector2))
+        if length_difference > 0:
+            if len(vector1) < len(vector2):
+                vector1.extend([0] * length_difference)
+            else:
+                vector2.extend([0] * length_difference)
 
-with open(input_file_path, 'r', encoding='utf-8') as infile, open(output_file_path, 'w', encoding='utf-8') as outfile:
-    
-    for line in infile:
-        for char in chars_to_remove:
-            line = line.replace(char, '')
+    elif len(vector1) != len(vector2):
+        raise ValueError("Vectors must have the same length.")
 
-        outfile.write(line)
-```
-After this, each model was invoked to syntheize speech using the Coqui TTS toolkit with the same snippet of text, the first few lines of the Bible in Esperanto. I felt this input was especially useful, since it contained lots of punctuation, which is what we're trying to test. The resulting WAV files from the punctuated and unpunctuated verisons of the model are named `esperanto_final.wav` and `esperanto_no_punct.wav`, respectively. The training statistics and quality of the outputs were both basically the same. Here is an example of the training stats:
+    dot_product = sum(x * y for x, y in zip(vector1, vector2))
+    cosine_similarity = dot_product / (
+        find_magnitude(vector1) * find_magnitude(vector2)
+    )
 
-```
---> TIME: 2024-02-25 01:58:59 -- STEP: 652/652 -- GLOBAL_STEP: 191450[0m
-     | > loss_disc: 2.7056007385253906  (2.522395754177309)
-     | > loss_disc_real_0: 0.15962564945220947  (0.1640304950223709)
-     | > loss_disc_real_1: 0.18271289765834808  (0.21253302690891734)
-     | > loss_disc_real_2: 0.22832253575325012  (0.21968462823138285)
-     | > loss_disc_real_3: 0.2471582442522049  (0.23464249146242078)
-     | > loss_disc_real_4: 0.2348787486553192  (0.23205599518016326)
-     | > loss_disc_real_5: 0.2568364441394806  (0.2360907632399635)
-     | > loss_0: 2.7056007385253906  (2.522395754177309)
-     | > grad_norm_0: tensor(8.1043, device='cuda:0')  (tensor(17.1827, device='cuda:0'))
-     | > loss_gen: 2.130958080291748  (2.2033398981110204)
-     | > loss_kl: 1.5401383638381958  (1.5755665924065936)
-     | > loss_feat: 7.32181978225708  (6.580922028155023)
-     | > loss_mel: 19.086673736572266  (18.72859995864157)
-     | > loss_duration: 2.8222999572753906  (2.646094435473219)
-     | > amp_scaler: 256.0  (256.0)
-     | > loss_1: 32.90188980102539  (31.73452292090633)
-     | > grad_norm_1: tensor(238.6747, device='cuda:0')  (tensor(201.2404, device='cuda:0'))
-     | > current_lr_0: 0.00019302411853756697 
-     | > current_lr_1: 0.00019302411853756697 
-     | > step_time: 1.5487  (1.4106978479017847)
-     | > loader_time: 0.0906  (0.0643565234947838)
-```
-The audio of both outputs both sound approximately like human speech, but not quite there yet. Definite breaks between vocalizations can be heard, as well as what seems like some differentiated proto-vowel sounds. Some consonant-like sounds can also be heard. It's interesting that the Esperanto word "cxielo" is audible in `esperanto_final.wav`. There is also a strongly audible lateral approximant /l/ at the end of the same file. In this way, the punctuated model seems to have slightly outperformed. More training epochs and more training data would benefit the quality of both model's outputs tremedously, as neiter is intelligible.
+    return round(cosine_similarity, 2)
 
-However, since punctuation is the main topic of inquiry here, the only rational way to empirically understand what we have done is devise a way to quantitatively measure if the punctuation (or lack thereof) has impacted the model's performance at all. Punctuations often denote some kind of pause in speech. So, measuring the rate of speech in each model's output along with the number of significant pauses in speech seems like a good way to begin some exploratory data analysis. I devised a simple script to quantify some of these things, `pause_analysis.py`:
+
+# TEST
+assert find_cosine_similarity([1, 2, 1], [1, 1, 1], False) == 0.94
+# TEST END
+
+# TEST
+assert find_cosine_similarity([1], [1, 1], True) == 0.71
+# TEST END
+
+# TEST
+assert find_cosine_similarity([1, 1], [1], True) == 0.71
+# TEST END
+
+# TEST
+try:
+    find_cosine_similarity([1, 1], [1], False)
+    assert False
+except ValueError as e:
+    assert str(e) == "Vectors must have the same length."
+# TEST END
+
+# TEST
+try:
+    find_cosine_similarity([], [1, 1, 1], True)
+    assert False
+except ValueError as e:
+    assert str(e) == "Cannot compute cosine similarity of empty vector(s)."
+# TEST END
+
+# TEST
+try:
+    find_cosine_similarity([0], [0], False)
+    assert False
+except ValueError as e:
+    assert (
+        str(e)
+        == "Both vectors populated only by value '0', unable to divide zero by zero."
+    )
+# TEST END
+```	
+
+It’s a simple implementation that uses generator expressions to implement vectorized computation. I also adding padding logic to the function and enforced that the input vectors be the same length. This wasn’t wholly necessary, but I wanted to add some extra complexity to the function. While finishing this example was satisfying, I can’t say this was a whole lot of fun to write. However, this idea bore greater creative fruit later.
+
+In improv theatre, there is a simple adage of “Yes, and…”. This basically means that any idea an improviser produces can be built upon incrementally. While this philosophy of creative generativity is essential to improv, it is also widely advantageous for many other pursuits. During my time as an AI Data Trainer, I would often try to “Yes, And” my code ideas. So, after writing the cosine similarity implementation above, I asked myself, “Yes, this code calculates the cosine similarity of two vectors and… what else?” The answer I landed on was, “This code calculates the cosine similarity of two vectors and takes Chinese character stroke decompositions as inputs.” More clearly, the goal of this next Python example is to use stroke decompositions of Chinese characters to create feature vectors, and then find the cosine similarity of those two feature vectors. Having spent many semesters in my undergrad studying Chinese and over 6 years living and working in China, Chinese has become my second language and is somewhat of a fascination of mine. Before explaining further, it’s important to understand a little bit about how the Chinese writing system works.
+
+Basically, there are 33 basic constituents or “strokes” that can be used to build any given Chinese character. These strokes are written and combined in a specific order. When a character’s strokes are put into a list in order of how they are written this is called a “stroke decomposition”. Since each character is a unique combination of strokes and the lists are ordered, this means a character’s stroke decomposition can be looked at like a “signature”.  For example, the character 来 (lái) which means “come” breaks down to `["一", "丨", "八", "一", "丷"]` whereas 请 (qíng) meaning “please” breaks down to `["㇊", "丶", "龶", "冂", "二"]`. I decided that if these unique signatures could be ascribed numerical values, one might be able to do something useful with them. Mindful that I had only an hour and a half to implement this, I achieved this by creating a toy integer encoding table, like this:
 
 ```python
-import wave
-import numpy as np
+stroke_encodings = {
+        "冖": 1,
+        "丶": 2,
+        "㇛": 3,
+        "一": 4,
+        "丿": 5,
+        "丨": 6,
+        "八": 7,
+        "丷": 8,
+        "龶": 9,
+        "冂": 10,
+        "二": 11,
+        "㇊": 12,
+    }
+```
 
-# Function to load WAV file and return numpy array of frames, sample rate, and duration
-def load_wav_as_array(file_path):
-    with wave.open(file_path, 'r') as wav_file:
-        n_frames = wav_file.getnframes()
-        sample_rate = wav_file.getframerate()
-        duration = n_frames / sample_rate
-        audio_data = wav_file.readframes(n_frames)
-        # Convert audio bytes to a numpy array based on the sample width
-        if wav_file.getsampwidth() == 2:
-            audio_array = np.frombuffer(audio_data, dtype=np.int16)
-        elif wav_file.getsampwidth() == 4:
-            audio_array = np.frombuffer(audio_data, dtype=np.int32)
+I wanted to implement a more complex encoding scheme (maybe one-hot encoding?) but I didn’t have time. Here is the first implementation of my idea along with some tests:
+
+```python
+def find_magnitude(vector: list[float]) -> float:
+
+    return (sum(x * x for x in vector)) ** 0.5
+
+
+def hanzi_similarity(
+    decomposition1: dict[str, list[str]], decomposition2: dict[str, list[str]]
+) -> float:
+
+    stroke_encodings = {
+        "冖": 1,
+        "丶": 2,
+        "㇛": 3,
+        "一": 4,
+        "丿": 5,
+        "丨": 6,
+        "八": 7,
+        "丷": 8,
+        "龶": 9,
+        "冂": 10,
+        "二": 11,
+        "㇊": 12,
+    }
+
+    if not decomposition1 or not decomposition2:
+        raise ValueError("Cannot perform operations on empty data entries.")
+
+    stroke_vector1 = [
+        stroke for sublist in decomposition1.values() for stroke in sublist
+    ]
+    stroke_vector2 = [
+        stroke for sublist in decomposition2.values() for stroke in sublist
+    ]
+
+    for stroke in set((stroke_vector1 + stroke_vector2)):
+        if stroke not in set(stroke_encodings.keys()):
+            raise ValueError(f"Stroke '{stroke}' is not in the encodings table.")
+
+    integer_vector1 = [stroke_encodings[stroke] for stroke in stroke_vector1]
+    integer_vector2 = [stroke_encodings[stroke] for stroke in stroke_vector2]
+
+    if not integer_vector1 or not integer_vector2:
+        raise ValueError("Cannot compute cosine similarity of empty vector(s).")
+
+    length_difference = abs(len(integer_vector1) - len(integer_vector2))
+    if length_difference > 0:
+        if len(integer_vector1) < len(integer_vector2):
+            integer_vector1.extend([0] * length_difference)
         else:
-            raise ValueError("Unsupported sample width")
-        return (audio_array, sample_rate, duration)
+            integer_vector2.extend([0] * length_difference)
 
-# Function to calculate the speech rate (words per minute)
-def calculate_speech_rate(duration, total_words=16):
-    return total_words / duration * 60
+    dot_product = sum(x * y for x, y in zip(integer_vector1, integer_vector2))
+    cosine_similarity = dot_product / (
+        find_magnitude(integer_vector1) * find_magnitude(integer_vector2)
+    )
 
-# Function to find significant pauses in the audio, which might indicate punctuation
-def find_significant_pauses(audio, sample_rate, threshold=0.02):
-    audio_normalized = audio / np.max(np.abs(audio))
-    pauses = np.abs(audio_normalized) < threshold
-    pause_lengths = []
-    current_pause_length = 0
-    for is_pause in pauses:
-        if is_pause:
-            current_pause_length += 1
-        elif current_pause_length > 0:
-            pause_lengths.append(current_pause_length / sample_rate)
-            current_pause_length = 0
-    significant_pauses = [pause for pause in pause_lengths if pause > 0.2]
-    return significant_pauses
+    return cosine_similarity
 
-# File paths
-file_path_1 = 'esperanto_final.wav'
-file_path_2 = 'esperanto_no_punct.wav'
 
-# Load WAV files and calculate durations
-audio_array_1, sample_rate_1, duration_1 = load_wav_as_array(file_path_1)
-audio_array_2, sample_rate_2, duration_2 = load_wav_as_array(file_path_2)
+import math
 
-# Calculate speech rates using the actual durations
-speech_rate_1 = calculate_speech_rate(duration_1)
-speech_rate_2 = calculate_speech_rate(duration_2)
+# TEST
+expected_result = 0.9320995887754049
+result = hanzi_similarity(
+    {"安": ["冖", "丶", "㇛", "一", "丿"]}, {"来": ["一", "丨", "八", "一", "丷"]}
+)
+assert math.isclose(result, expected_result)
+# TEST_END
 
-# Find significant pauses
-significant_pauses_1 = find_significant_pauses(audio_array_1, sample_rate_1)
-significant_pauses_2 = find_significant_pauses(audio_array_2, sample_rate_2)
+# TEST
+expected_result = 0.6157666004701773
+result = hanzi_similarity(
+    {"请": ["㇊", "丶", "龶", "冂", "二"]}, {"青": ["龶", "冂", "二"]}
+)
+assert math.isclose(result, expected_result)
+# TEST_END
 
-print("Speech Rate 1:", speech_rate_1)
-print("Speech Rate 2:", speech_rate_2)
-print("Significant Pauses 1:", significant_pauses_1)
-print("Significant Pauses 2:", significant_pauses_2)
+# TEST
+try:
+    hanzi_similarity(
+        {"请": ["㇊", "丶", "龶", "冂", "二"]}, {"青": ["龶", "冂", "二", "Q"]}
+    )
+    assert False
+except ValueError as e:
+    assert str(e) == "Stroke 'Q' is not in the encodings table."
+# TEST_END
+
+# TEST
+try:
+    hanzi_similarity(
+        {"请": ["㇊", "丶", "龶", "冂", "二"]}, {"青": ["龶", "冂", "二", " "]}
+    )
+    assert False
+except ValueError as e:
+    assert str(e) == "Stroke ' ' is not in the encodings table."
+# TEST_END
+
+
+# TEST
+try:
+    hanzi_similarity({"请": ["㇊", "丶", "龶", "冂", "二"]}, {"青": []})
+    assert False
+except ValueError as e:
+    assert str(e) == "Cannot compute cosine similarity of empty vector(s)."
+# TEST_END
+
+# TEST
+try:
+    hanzi_similarity({"青": []}, {"请": ["㇊", "丶", "龶", "冂", "二"]})
+    assert False
+except ValueError as e:
+    assert str(e) == "Cannot compute cosine similarity of empty vector(s)."
+# TEST_END
+
+# TEST
+try:
+    hanzi_similarity({}, {})
+    assert False
+except ValueError as e:
+    assert str(e) == "Cannot perform operations on empty data entries."
+# TEST_END
 ```
 
-For the first audio file (esperanto_final.wav), its speech rate is about 27.95 words per minute. 
-The speech rates are almost the same, but there is a little bit of increase in speed from the second one. This might be because punctuation was not used, hence there were fewer pauses. Defined as being longer than 0.2 seconds, there are several significant pauses found in `esperanto_final.wav`. There's an especially long break lasting over 5 seconds, which is likely the break between sentences.
+My earlier cosine similarity implementation forms the basis for this code, in addition to logic for parsing the inputs into integer vectors. The crudeness of the encoding scheme makes me wonder how meaningful the outputs of this function are, but it is good proof of concept if nothing else.
 
-For the second WAV file ,`esperanto_no_punct.wav`, the speech rate is approximately 29.32 words per minute. The other WAV file has a large number of breaks, including one longer than five and a half seconds. Despite being generated without punctuation, the presence of pauses implies that TTS system can still pick up on what punctutuaion *represents*. My hypothesis is that VITS is still able to correlate observed pauses in speech from the audio data with spaces between words in text. In this way, punctutation may be redundant. Perhaps removing punctuation when training a VITS TTS systems in the way shown here could result in a marginally more efficient training process. Less characters are less data to be processed, after all. Another experiment would need to be devised to investigate this idea.
+I knew that this idea could be fleshed out a lot more, so I said “Yes, And” to the idea once more and landed on the idea of possibly using this as a language teaching tool. There can be a significant difference between the traditional and simplified versions of Chinese characters. Having a way to quantify approximately how different a simplified character is from its traditional counterpart could be useful information for language learners. This information could help learners prioritize which simplified to traditional pairings to study. It could even help native speakers who are transitioning between locales where one writing standard is promoted over the other. Knowing that I was now intrigued with this idea and wanted to revisit it more in the future, I went out of my way to make it modular and extensible. I knew for an application like this to be viable, it would need a database of stroke decompositions. I decided to go ahead and define what those data entries should look like by writing a class that took JSON strings as input in the following format:
 
-In terms of future investigations, one thing I would definitely like to pursue is optimizing the hyperparameters. I must admit that not a lot of thought was given to the hyperparameters in this experiment, as I was spending a lot of engey figuring out how to use the High Performance Computing cluster I was running this code one. I think a grid search to find the best combination of hyperparameters for training would do a lot for this project. There are a couple hyperparameters in particular that I would like to hone in on for future experiments.
+```json
+{
+    "请": {
+        "traditional": "請",
+        "decomposition": {
+            "simplified": ["㇊", "丶", "龶", "冂", "二"],
+            "traditional": ["一", "丶", "二", "口", "龶", "冂", "二"]
+        },
+        "glosses": ["please", "invite", "treat"]
+    }
+}
+```
 
-In the engineering of text-to-speech systems, the choice of specific audio parameters like num_mels and hop_length is very important in determining synthesized speech’s quality. For instance, hop_length affects temporal resolution within audio processing whereshorter hop lengths could allow for generation of more detailed waveforms required in representing the phonetic subtleties present in natural language . While choosing this parameter one should consider balancing between detail and computational efficiency as well as noise inherent to the audio signal.
+The glosses aren’t used here, but they may be useful later if I decide to extend the functionality of the module somehow, so I added them in. I also made the deliberate decision to use the simplified character as the key for the Python dictionaries these JSON strings would later be read into. This is based on the presupposition that more people know simplified characters and want to learn traditional characters than vice versa. Lastly, I decided to write this example as a class since this project was becoming increasingly complex and could only be achieved by writing multiple functions. Having this as a class also makes it easier to go back and add functionality later.  Here is the full implementation of this idea, with tests again:
 
-Similarly, num_mels, which is the number of number of Mel spectrogram dimensions to be used, also plays a key role in determining spectral resolution within an audio system. The higher the number of MFCs selected, the higher the level of detail regarding representation of various spectral characteristics exhibited by different parts of any given sound wave; this is something necessary towards achieving clarity and naturalness when it comes to speech synthesis. 80 num_mels seems like a bizarre setting since most other examples of this are set as a power of two. But, after testing the parameters several times, this setting seemed to give the best combo of speed and accuracy.
+```python
+import json
 
-These two are fundamental components in designing a text-to-speech system but they may need adjusting depending on factors such as languages or desired output qualities. We don't necessarily know what those are when it comes to Esperanto, so it's worth exploring. Such decisions are based on these technical considerations which straddle the complex nature of TTS system design.
 
-In the course of this experiment, I learned the ins and outs of how to train a modern, neural TTS model, as well as how to use the UAZ HPC. This subspecialty of Natural Language Processing really is a blast. It’s always so much fun opening the .wav file for the output and seeing what you get! I definitely plan to delve deeper into this realm of NLP and do more experiments in the future.
+class HanziVectors:
 
-All code and data associated with this project can be found at [this](https://github.com/pbarrett520/VITS_esperanto) Github repo!
+    def __init__(self) -> None:
+
+        self.vocabulary = {}
+
+        self.stroke_encodings = {
+            "丶": 1,
+            "一": 2,
+            "丨": 3,
+            "丿": 4,
+            "乛": 5,
+            "乚": 6,
+            "𠃍": 7,
+            "𠃌": 8,
+            "㇀": 9,
+            "㇁": 10,
+            "㇂": 11,
+            "㇃": 12,
+            "㇄": 13,
+            "㇅": 14,
+            "㇇": 15,
+            "㇈": 16,
+            "㇉": 17,
+            "㇊": 18,
+            "㇋": 19,
+            "㇌": 20,
+            "㇍": 21,
+            "㇎": 22,
+            "㇏": 23,
+            "㇐": 24,
+            "㇑": 25,
+            "㇚": 26,
+            "㇛": 27,
+            "冖": 28,
+            "冂": 29,
+            "八": 30,
+            "丷": 31,
+            "龶": 32,
+            "二": 33,
+        }
+
+    def _magnitude(self, vector: list[float]) -> float:
+
+        return (sum(x * x for x in vector)) ** 0.5
+
+    def _extract_vectors(self, character: str) -> list[list[str], list[str]]:
+        result = {}
+        if character in self.vocabulary:
+            data = self.vocabulary[character]
+            if "decomposition" in data:
+                vector_pairs = {}
+                if "simplified" in data["decomposition"]:
+                    vector_pairs["simplified"] = [
+                        self.stroke_encodings.get(stroke, 0)
+                        for stroke in data["decomposition"]["simplified"]
+                    ]
+                if "traditional" in data["decomposition"]:
+                    vector_pairs["traditional"] = [
+                        self.stroke_encodings.get(stroke, 0)
+                        for stroke in data["decomposition"]["traditional"]
+                    ]
+                result = [
+                    list(vector_pairs["simplified"]),
+                    list(vector_pairs["traditional"]),
+                ]
+        return result
+
+    def add_vocab(self, json_string: str) -> None:
+        try:
+
+            new_entry = json.loads(json_string)
+            for key, value in new_entry.items():
+                if key in self.vocabulary:
+                    pass
+                self.vocabulary[key] = value
+
+        except json.JSONDecodeError as e:
+
+            print(f"Error adding vocabulary: {str(e)}")
+
+    def find_similarity(self, hanzi: str) -> float:
+
+        if hanzi not in set(self.vocabulary.keys()):
+            raise ValueError("Hanzi not in vocabulary.")
+
+        vectors = self._extract_vectors(hanzi)
+
+        integer_vector1 = vectors[0]
+        integer_vector2 = vectors[1]
+
+        if not integer_vector1 or not integer_vector2:
+            raise ValueError("Cannot perform operations on empty data entries.")
+
+        length_difference = abs(len(integer_vector1) - len(integer_vector2))
+
+        if length_difference > 0:
+            if len(integer_vector1) < len(integer_vector2):
+                integer_vector1.extend([0] * length_difference)
+            else:
+                integer_vector2.extend([0] * length_difference)
+
+        dot_product = sum(x * y for x, y in zip(integer_vector1, integer_vector2))
+        cosine_similarity = dot_product / (
+            self._magnitude(integer_vector1) * self._magnitude(integer_vector2)
+        )
+
+        return round(cosine_similarity, 2)
+
+
+hanzi_vectors = HanziVectors()
+
+qing = """
+{
+    "请": {
+        "traditional": "請",
+        "decomposition": {
+            "simplified": ["㇊", "丶", "龶", "冂", "二"],
+            "traditional": ["一", "丶", "二", "口", "龶", "冂", "二"]
+        },
+        "glosses": ["please", "invite", "treat"]
+    }
+}
+"""
+lai = """
+{
+    "来": {
+        "traditional": "來",
+        "decomposition": {
+            "simplified": ["一", "丨", "八", "一", "丷"],
+            "traditional": ["一", "丨", "八", "从"]
+        },
+        "glosses": ["come", "arrive", "future"]
+    }
+}
+"""
+# TEST
+hanzi_vectors.add_vocab(
+    """
+{
+    "请": {
+        "traditional": "請",
+        "decomposition": {
+            "simplified": ["㇊", "丶", "龶", "冂", "二"],
+            "traditional": ["一", "丶", "二", "口", "龶", "冂", "二"]
+        },
+        "glosses": ["please", "invite", "treat"]
+    }
+}
+"""
+)
+hanzi_vectors.add_vocab(
+    """
+{
+    "来": {
+        "traditional": "來",
+        "decomposition": {
+            "simplified": ["一", "丨", "八", "一", "丷"],
+            "traditional": ["一", "丨", "八", "从"]
+        },
+        "glosses": ["come", "arrive", "future"]
+    }
+}
+"""
+)
+
+assert hanzi_vectors.vocabulary == {
+    "请": {
+        "traditional": "請",
+        "decomposition": {
+            "simplified": ["㇊", "丶", "龶", "冂", "二"],
+            "traditional": ["一", "丶", "二", "口", "龶", "冂", "二"],
+        },
+        "glosses": ["please", "invite", "treat"],
+    },
+    "来": {
+        "traditional": "來",
+        "decomposition": {
+            "simplified": ["一", "丨", "八", "一", "丷"],
+            "traditional": ["一", "丨", "八", "从"],
+        },
+        "glosses": ["come", "arrive", "future"],
+    },
+}
+# END TEST
+
+# TEST
+assert hanzi_vectors.find_similarity("来") == 0.7
+# END TEST
+
+# TEST
+assert hanzi_vectors.find_similarity("请") == 0.59
+# END TEST
+
+# TEST
+try:
+    hanzi_vectors.find_similarity("f")
+    assert False
+except ValueError as e:
+    assert str(e) == "Hanzi not in vocabulary."
+#  END TEST
+
+# TEST
+try:
+    hanzi_vectors.add_vocab("{asgfd}")
+except json.JSONDecodeError as e:
+    assert (
+        str(e)
+        == "Error adding vocabulary: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)"
+    )
+    assert False
+# END TEST
+
+# TEST
+hanzi_vectors.add_vocab(
+    """
+{
+    "高": {
+        "traditional": "翠",
+        "decomposition": {
+            "simplified": [],
+            "traditional": []
+        },
+        "glosses": ["please", "invite", "treat"]
+    }
+}
+"""
+)
+
+try:
+    hanzi_vectors.find_similarity("高")
+    assert False
+except ValueError as e:
+    assert str(e) == "Cannot perform operations on empty data entries."
+# END TEST
+```
+
+The core functionality of finding the cosine similarity of two feature vectors is still there in the `find_similarity `method, but I altered the method to only take a single simplified character as input and return the cosine similarity of it and its traditional analouge. I also wrote a method for adding new vocabulary items, which could be used iteratively to add multiple items from a database someday. I also wrote a private method called `_extract_vectors` to pull the integer vectors out of the complex data structure the class is designed to work with. Again, the encoding scheme needs to be refined somehow and the code needs to be optimized, but this is gradually getting closer and closer to being polished. I look forward to working on this project more when I have more free time to do experiments like this.
+
+Another interesting thing we learned in the HLT program was how search indexes work and statistical concepts like tf-idf (the product of term frequency and inverse document frequency) work. Tf-idf is a foundational concept in NLP for understanding how search engines analyze web content. I enjoyed studying this for my coursework because it really helped demystified how Google works (though their proprietary methods are obviously much more complex).  I think that’s pretty cool, so I thought it would be fun to code up an example of a function that uses tf-idf to show the client’s LLM. Here’s what I came up with:
+
+```python
+from math import log
+from collections import Counter
+
+
+def tokenize(text: str) -> str:
+
+    puncts = set("!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~")
+
+    no_punct = "".join([char.lower() if char not in puncts else " " for char in text])
+
+    return no_punct.split()
+
+
+def find_tf(tokenized_document: list[str]) -> dict[str, float]:
+
+    tf_values = Counter(tokenized_document)
+
+    total_words = len(tokenized_document)
+
+    return {word: count / total_words for word, count in tf_values.items()}
+
+
+def find_df(tokenized_corpus: list[list[str]]) -> dict[str, int]:
+
+    df = Counter()
+
+    for document in tokenized_corpus:
+        unique_terms = set(document)
+        df.update(unique_terms)
+
+    return dict(df)
+
+
+def make_tf_idf_table(corpus: list[tuple[int, str]]) -> list[dict[str, float]]:
+
+    if not corpus:
+        raise ValueError("Cannot perform operations on an empty corpus.")
+
+    for doc in corpus:
+        if not doc:
+            raise ValueError("Corpus contains empty element(s).")
+
+    tokenized_corpus = [tokenize(doc[1]) for doc in corpus]
+
+    tfs = [find_tf(doc) for doc in tokenized_corpus]
+    dfs = find_df(tokenized_corpus)
+    corpus_length = len(tokenized_corpus)
+
+    idfs = {word: log(corpus_length / frequency) for word, frequency in dfs.items()}
+
+    tf_idf_table = [
+        {word: tf[word] * idfs[word] for word in doc}
+        for doc, tf in zip(tokenized_corpus, tfs)
+    ]
+
+    return tf_idf_table
+
+
+from math import isclose
+
+corpus = [
+    (0, 'Jane said,"Look,look. I see a big yellow ear. See the yellow ear go.'),
+    (
+        1,
+        'Sally said, "I see it. I see the big yellow ear. I want to go away in it. I want to go away, away."',
+    ),
+    (
+        2,
+        'Dick said, "Look up, Sally. You can see something. It is red and yellow. It can go up, up, up. It can go away."',
+    ),
+]
+
+
+# TEST
+assert make_tf_idf_table(corpus) == [
+    {
+        "jane": 0.07324081924454065,
+        "said": 0.0,
+        "look": 0.05406201441442192,
+        "i": 0.02703100720721096,
+        "see": 0.0,
+        "a": 0.07324081924454065,
+        "big": 0.02703100720721096,
+        "yellow": 0.0,
+        "ear": 0.05406201441442192,
+        "the": 0.02703100720721096,
+        "go": 0.0,
+    },
+    {
+        "sally": 0.016894379504506847,
+        "said": 0.0,
+        "i": 0.06757751801802739,
+        "see": 0.0,
+        "it": 0.033788759009013694,
+        "the": 0.016894379504506847,
+        "big": 0.016894379504506847,
+        "yellow": 0.0,
+        "ear": 0.016894379504506847,
+        "want": 0.0915510240556758,
+        "to": 0.0915510240556758,
+        "go": 0.0,
+        "away": 0.05068313851352055,
+        "in": 0.0457755120278379,
+    },
+    {
+        "dick": 0.0457755120278379,
+        "said": 0.0,
+        "look": 0.016894379504506847,
+        "up": 0.1831020481113516,
+        "sally": 0.016894379504506847,
+        "you": 0.0457755120278379,
+        "can": 0.13732653608351372,
+        "see": 0.0,
+        "something": 0.0457755120278379,
+        "it": 0.05068313851352055,
+        "is": 0.0457755120278379,
+        "red": 0.0457755120278379,
+        "and": 0.0457755120278379,
+        "yellow": 0.0,
+        "go": 0.0,
+        "away": 0.016894379504506847,
+    },
+]
+# END TEST
+
+# TEST
+expected_output = [
+    {
+        "jane": 0.07324081924454065,
+        "said": 0.0,
+        "look": 0.05406201441442192,
+        "i": 0.02703100720721096,
+        "see": 0.0,
+        "a": 0.07324081924454065,
+        "big": 0.02703100720721096,
+        "yellow": 0.0,
+        "ear": 0.05406201441442192,
+        "the": 0.02703100720721096,
+        "go": 0.0,
+    },
+    {
+        "sally": 0.016894379504506847,
+        "said": 0.0,
+        "i": 0.06757751801802739,
+        "see": 0.0,
+        "it": 0.033788759009013694,
+        "the": 0.016894379504506847,
+        "big": 0.016894379504506847,
+        "yellow": 0.0,
+        "ear": 0.016894379504506847,
+        "want": 0.0915510240556758,
+        "to": 0.0915510240556758,
+        "go": 0.0,
+        "away": 0.05068313851352055,
+        "in": 0.0457755120278379,
+    },
+    {
+        "dick": 0.0457755120278379,
+        "said": 0.0,
+        "look": 0.016894379504506847,
+        "up": 0.1831020481113516,
+        "sally": 0.016894379504506847,
+        "you": 0.0457755120278379,
+        "can": 0.13732653608351372,
+        "see": 0.0,
+        "something": 0.0457755120278379,
+        "it": 0.05068313851352055,
+        "is": 0.0457755120278379,
+        "red": 0.0457755120278379,
+        "and": 0.0457755120278379,
+        "yellow": 0.0,
+        "go": 0.0,
+        "away": 0.016894379504506847,
+    },
+]
+
+
+actual_output = make_tf_idf_table(corpus)
+for doc_actual, doc_expected in zip(actual_output, expected_output):
+    for word, expected_value in doc_expected.items():
+        actual_value = doc_actual.get(word, 0)
+
+        assert isclose(actual_value, expected_value)
+# END TEST
+
+# TEST
+try:
+    make_tf_idf_table([])
+    assert False
+except ValueError as e:
+    assert str(e) == "Cannot perform operations on an empty corpus."
+# END TEST
+
+# TEST
+try:
+    make_tf_idf_table([["Hello"], []])
+    assert False
+except ValueError as e:
+    assert str(e) == "Corpus contains empty element(s)."
+# END TEST
+```
+
+Since the intent behind this piece of code was to toy with the concept of tf-idf, I thought it would be neat to write a function that calculates the tf-idf of every word in a corpus and returns them in a Python dictionary. This required the use of multiple helper functions, so an object-oriented approach might have been better here. If I ever come back to this little project, one of the first things I’d do to refactor the above code would be turning it into a class.
+
+Tokenizers are another fundamental NLP concept I was exposed to during my studies at UAZ. Tokenizers are complex pieces of software, and implementing a good tokenizer in an hour and a half is basically impossible. But, it is possible to write a toy tokenizer in that amount of time. Here is a Python function that tokenizes English copulas (“to be” verbs). While it’s functionality is somewhat narrow, I am proud that it accounts for (most) contractions, including negative contractions. I didn’t have time to implement something that effectively distinguishes between an apostrophe “s” being used as a contraction for “is” and apostrophe “s” being used as a possessive, but the copula tokenizer covers most other edge cases I could think of at the time. The regexes aren’t clever, but they get the job done. Here is the code:
+
+```python
+from collections import Counter
+import re
+
+
+def be_counter(sentence: str) -> list[(list[str], list[str]), Counter]:
+
+    if sentence == "":
+        raise ValueError("Cannot tokenize an empty string!")
+
+    contraction_patterns = {
+        re.compile(r"(who's|isn't|he's|she's|it's)"): "is",
+        re.compile(r"(you're|they're|we're|aren't)"): "are",
+        re.compile(r"(I'm)"): "am",
+        re.compile(r"(wasn't)"): "was",
+        re.compile(r"(weren't)"): "were",
+    }
+
+    copulas = {
+        "am": "VBP",
+        "is": "VBZ",
+        "are": "VBP",
+        "was": "VBD",
+        "were": "VBD",
+        "be": "VB",
+        "being": "VBG",
+        "been": "VBG",
+    }
+
+    sentence = sentence.lower()
+    sentence = re.sub(r"[^\w\s']", "", sentence)
+    sentence = sentence.split(" ")
+
+    for i in range(len(sentence)):
+        for pattern, replacement in contraction_patterns.items():
+            if pattern.match(sentence[i]):
+                sentence[i] = replacement
+
+    just_copulas = [token for token in sentence if token in copulas.keys()]
+    tags = [copulas[token] if token in copulas.keys() else "???" for token in sentence]
+    counts = Counter(just_copulas + tags)
+
+    return [(sentence, tags), counts]
+
+
+# TEST
+assert be_counter("Isn't") == [(["is"], ["VBZ"]), Counter({"is": 1, "VBZ": 1})]
+# TEST
+
+assert be_counter("Isn't, WAS") == [
+    (["is", "was"], ["VBZ", "VBD"]),
+    Counter({"is": 1, "was": 1, "VBZ": 1, "VBD": 1}),
+]
+# TEST
+
+assert be_counter("My name is Jeff.") == [
+    (["my", "name", "is", "jeff"], ["???", "???", "VBZ", "???"]),
+    Counter({"???": 3, "is": 1, "VBZ": 1}),
+]
+# TEST
+
+try:
+    be_counter("")
+except ValueError as e:
+    assert str(e) == "Cannot tokenize an empty string!"
+# TEST
+```
+The function uses Penn Treebank  tags to tokenize copulas. I also made use of a counter object to count instances of each tag. The was no practical motive behind this design feature, I just thought it would be fun to do. 
+I even wrote a toy Latin verb conjugator. Latin was the first foreign language I ever learned, and studying the subject is what started my interest in Linguistics, and later NLP. Latin (and realy any other ancient Indo-European language) has a notoriously complex verb conjugation system. So, writing code to automate the process seemed like low hanging fruit when I was looking for ideas to code. Here it is:
+
+```python
+def conjugator(verb: str, person: int, singular: bool) -> str:
+
+    if not verb:
+        raise ValueError("Value 'verb' must not be empty.")
+
+    verb = verb.lower()
+
+    if verb[-3:] != "are" or len(verb) <= 3:
+        raise ValueError("Input must be a 1st conjugation infinitive verb.")
+
+    if person not in {1, 2, 3}:
+        raise ValueError(f"'{person}' not a valid person number.")
+
+    conj_table = {
+        "singular": {1: "o", 2: "as", 3: "at"},
+        "plural": {1: "amus", 2: "atis", 3: "ant"},
+    }
+
+    stem = verb[:-3]
+
+    if singular:
+        new_ending = conj_table["singular"][person]
+    else:
+        new_ending = conj_table["plural"][person]
+
+    return stem + new_ending
+
+
+# TEST
+assert conjugator("amare", 1, True) == "amo"
+# END TEST
+
+# TEST
+assert conjugator("amare", 2, True) == "amas"
+# END TEST
+
+
+# TEST
+assert conjugator("amare", 3, True) == "amat"
+# END TEST
+
+
+# TEST
+assert conjugator("amare", 1, False) == "amamus"
+# END TEST
+
+
+# TEST
+assert conjugator("amare", 2, False) == "amatis"
+# END TEST
+
+
+# TEST
+assert conjugator("amare", 3, False) == "amant"
+# END TEST
+
+# TEST
+try:
+    conjugator("amare", 0, False)
+    assert False
+except ValueError as e:
+    pass
+# END TEST
+
+# TEST
+try:
+    conjugator("are", 3, False)
+    assert False
+except ValueError as e:
+    pass
+# END TEST
+
+# TEST
+try:
+    conjugator("habere", 3, False)
+    assert False
+except ValueError as e:
+    pass
+# END TEST
+
+# TEST
+try:
+    conjugator("", 3, False)
+    assert False
+except:
+    pass
+# END_TEST
+```
+
+This code is just barely complex enough to be submittable, and I knew a regex-based implementation would make more sense. Having had lots of practice with regexes in the HLT program, I engineered another toy conjugator. This one uses regular expressions to do more of the heavy lifting as opposed to manual string manipulation. It only works for the first conjugation indicative present (the most regular one) like the first implementation, but this one also accounts for passive voice.
+
+```python
+import re
+
+
+def regex_conjugator(verb: str, person: int, number: str, voice: str) -> str:
+
+    if not verb:
+        raise ValueError("Cannot compute empty string value.")
+
+    first_conj_end_validation = re.compile(r"([a-z]+are)")
+
+    verb = verb.lower()
+
+    if not re.search(first_conj_end_validation, verb):
+        raise ValueError("Input must be a 1st conjugation infinitive verb.")
+
+    vocabs = {
+        "person_vocab": {1, 2, 3},
+        "number_vocab": {"plural", "singular"},
+        "voice_vocab": {"active", "passive"},
+    }
+
+    if person not in vocabs["person_vocab"]:
+        raise ValueError(f"Valid inputs for 'person' are  '1', '2', or '3'.")
+    elif number not in vocabs["number_vocab"]:
+        raise ValueError("Valid inputs for 'number' are 'singular' or 'plural'.")
+    elif voice not in vocabs["voice_vocab"]:
+        raise ValueError("Valid inputs for 'voice' are 'active' or 'passive'.")
+
+    conj_table = {
+        "active": {
+            "singular": {1: "o", 2: "as", 3: "at"},
+            "plural": {1: "amus", 2: "atis", 3: "ant"},
+        },
+        "passive": {
+            "singular": {1: "abar", 2: "abaris", 3: "abatur"},
+            "plural": {1: "abamur", 2: "abamini", 3: "abantur"},
+        },
+    }
+
+    return re.sub(r"are", conj_table[voice][number][person], verb)
+
+
+# TEST
+person_vocab = [1, 2, 3]
+number_vocab = ["plural", "singular"]
+voice_vocab = ["active", "passive"]
+
+permutations = []
+for person in person_vocab:
+    for number in number_vocab:
+        for voice in voice_vocab:
+
+            permutations.append(regex_conjugator("amare", person, number, voice))
+
+assert permutations == [
+    "amamus",
+    "amabamur",
+    "amo",
+    "amabar",
+    "amatis",
+    "amabamini",
+    "amas",
+    "amabaris",
+    "amant",
+    "amabantur",
+    "amat",
+    "amabatur",
+]
+# TEST END
+
+# TEST
+try:
+    regex_conjugator("amare", 0, "active", "passive")
+    assert False
+except ValueError as e:
+    assert str(e) == "Valid inputs for 'person' are  '1', '2', or '3'."
+# END TEST
+
+# TEST
+try:
+    regex_conjugator("are", 3, "active", "passive")
+    assert False
+except ValueError as e:
+    assert str(e) == "Input must be a 1st conjugation infinitive verb."
+# END TEST
+
+
+# TEST
+try:
+    regex_conjugator("amare", 3, "jefgn", "passive")
+    assert False
+except ValueError as e:
+    assert str(e) == "Valid inputs for 'number' are 'singular' or 'plural'."
+# END TEST
+
+# TEST
+try:
+    regex_conjugator("amare", 3, "singular", "jhfdsbg")
+    assert False
+except ValueError as e:
+    assert str(e) == "Valid inputs for 'voice' are 'active' or 'passive'."
+# END TEST
+
+# TEST
+try:
+    regex_conjugator("", 3, "singular", "jhfdsbg")
+    assert False
+except ValueError as e:
+    assert str(e) == "Cannot compute empty string value."
+# END TEST
+```
+
+While these are just a few of my favorite NLP examples I got to write during my time as an AI data trainer, there were many more that I submitted. Like I mentioned, NLP is a niche specialty. Since the model had not really ever been exposed to novel NLP code from a trainer before, I like to think that I was able to significantly extend the model’s knowledge and functionality in this domain.
+
+After a few weeks of writing code examples, I was tapped for promotion to the role of Quality Analyst (QA). Now instead of writing code myself, I spend my day reviewing and fixing code that other trainers write. Technical skills are still paramount for this role, since we QAs are responsible for enforcing professional standards on all code submissions. However, the role is multifaceted. Giving feedback to other people about their code requires social grace and acumen. Otherwise, people will not be receptive to your advice. In my role as a QA, I am often called upon to lead workshops and mentor new hires, which is my favorite part of the job. Having spent over half a decade as an educator, stepping into the role of mentor feels very natural for me. I take great joy in getting to know the trainers I interact with. I always feel a burst of pride when I grade Python example written by a trainer I mentored and seeing that they got a perfect score or implemented a piece of feedback I had given previously. As a QA, I also get to dip my toes into the world of management as well. When there is a problem with a process, we QAs are called upon by management to brainstorm and implement creative solutions, since we are most acquainted with the day to day running of the project. It’s an exciting, fulfilling role that I think my training in the UAZ HLT program left me uniquely well equipped for. Having dipped my proverbial toe into the world of industrial scale AI, I cannot wait to see where my career will take me next!
+
+All code examples mentioned in this article (and lots of other examples that weren’t) can be found [here]( https://github.com/pbarrett520/nlp_scripts/tree/main)!
