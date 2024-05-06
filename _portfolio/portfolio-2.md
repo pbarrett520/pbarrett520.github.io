@@ -1,6 +1,6 @@
 ---
 title: "Using  VITS on Coqui TTS to Train and Compare Two Esperanto Models"
-excerpt: "Short description of the goals and content of your project<br/><img src='/images/500x300.png'>"
+excerpt: "<br/><img src='/images/tts-image.jpg'>"
 collection: portfolio
 ---
 
