@@ -1,5 +1,5 @@
 ---
-title: "Using VITS on Coqui TTS to Train and Compare Two Esperanto Models"
+title: "Data Factory: My Experiences Training Industrial Scale A.I."
 excerpt: "<br/><img src='./images/tts-image.jpg'>"
 collection: portfolio
 ---
