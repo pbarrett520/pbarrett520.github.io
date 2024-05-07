@@ -64,9 +64,9 @@ Designed and developed Python software tools for Shanghai's pioneering AI-driven
 ### International Private School Educator ⋅ Shanghai, China (August 2017 – June 2022)
 #### *Fudan International School, Hangzhou-Bay Bilingual School Shanghai Jinshan*
 Facilitated effective communication between stakeholders with various cultural backgrounds. Aided in client retention by ensuring the provision of all deliverables relating to student performance and regularly meeting with clients to discuss the progress of their students. Grew accounts by building relationships with clients and winning their trust based on performance. Effectively code switched between English and Mandarin Chinese to engage with clients and co-workers in a bilingual, multicultural environment. Routinely exceeded performance KPIs in an ambiguous, fast paced, high-stakes environment.
-- **Library & English Enrichment Teacher:** Developed five IB courses from scratch while also writing Python tools to aid data processing.
-- **6th Grade Expat Group Leader:** Led a cross-functional, bilingual team of educators while also engaging with administration.
-- **Middle School Teacher:** Implemented crucial policies during the school’s seminal year that later formed the basis of its educational approach.
+- **Library & English Enrichment Teacher:** Developed five IB courses from scratch while also writing Python tools to aid data processing. Taught the entire student body of 150+ children.
+- **6th Grade Expat Group Leader:** Led a cross-functional, bilingual team of up to a dozen educators while also engaging with administration.
+- **Middle School Teacher:** Implemented crucial policies during the school’s seminal year that later formed the basis of its educational approach. Had the good fortune to get to teach hundreds of different students across multiple grade levels during my tenure.
 
 ## Education
 

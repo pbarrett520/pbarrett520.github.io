@@ -33,7 +33,7 @@ During my time with Zmack! Consulting in Shanghai, I led the development of AI-d
 **Areas of Expertise:**
 - **Natural Language Processing:** I specialize in developing software solutions for problems that require extensive backgound expertise in the field of Linguistics. I have experience with both neural and rules-based approaches to tasks like text generation, text-to-speech, sentiment analysis, tokenization, and more.
 
-- **Education:** Dedicated to enhancing the learning process through innovative teaching methods and educational practices that make learning accessible and effective for diverse populations. I aspire to leverage my skills in NLP to create technologies that make learning and teching easier for both teachers and their students.
+- **Education:** Dedicated to enhancing the learning process through innovative teaching methods and educational practices that make learning accessible and effective for diverse populations. I aspire to leverage my skills in NLP to create technologies that make education easier for both teachers and their students.
 
 - **Leadership in Multicultural Environments:** Proven success in leading multicultural teams, driving project success through innovative strategies and inclusive leadership.
 
@@ -41,5 +41,5 @@ During my time with Zmack! Consulting in Shanghai, I led the development of AI-d
 - **Master of Science in Human Language Technology,** University of Arizona, Tucson, AZ
 - **Bachelor of Arts in Applied Linguistics,** Georgia State University (Summa Cum Laude), Atlanta, GA
 
-My goal is to merge cutting-edge technology with educational practices to globally enhance educational outcomes. I invite you to explore my portfolio to understand the depth and breadth of my projects and their impact on the field of education.
+My goal is to merge cutting-edge technology with educational practices to globally enhance educational outcomes. I invite you to explore my [portfolio](https://pbarrett520.github.io/portfolio/) to understand the depth and breadth of my projects and their impact on the field of education.
 
