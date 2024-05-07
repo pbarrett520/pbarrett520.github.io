@@ -1,6 +1,6 @@
 ---
 title: "Data Factory: My Experiences Training Industrial Scale A.I."
-excerpt: <br/><img src='{{ site.url }}{{ site.baseurl }}/images/data-factory.jpg'>
+excerpt: <br/><img src='https://pbarrett520.github.io/images/data-factory.jpg'>
 collection: portfolio
 ---
 All code examples mentioned in this article (and lots of other examples that weren’t) can be found [here](https://github.com/pbarrett520/nlp_scripts/tree/main)!
