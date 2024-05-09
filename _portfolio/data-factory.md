@@ -93,7 +93,7 @@ except ValueError as e:
         == "Both vectors populated only by value '0', unable to divide zero by zero."
     )
 # TEST END
-```      
+```
 
 
 It’s a simple implementation that uses generator expressions to implement vectorized computation. I also added padding logic to the function and enforced that the input vectors be the same length. This wasn’t wholly necessary, but I wanted to add some extra complexity to the function. While finishing this example was satisfying, I can’t say this was a whole lot of fun to write. However, this idea bore greater creative fruit later.
