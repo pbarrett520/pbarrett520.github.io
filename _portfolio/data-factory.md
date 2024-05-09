@@ -101,26 +101,7 @@ It’s a simple implementation that uses generator expressions to implement vect
 
 In improv theatre, there is a simple adage of “Yes, and…”. This basically means that any idea an improviser produces can be built upon incrementally. While this philosophy of creative generativity is essential to improv, it is also widely advantageous for many other pursuits. During my time as an AI Data Trainer, I would often try to “Yes, And” my code ideas. So, after writing the cosine similarity implementation above, I asked myself, “Yes, this code calculates the cosine similarity of two vectors and… what else?” The answer I landed on was, “This code calculates the cosine similarity of two vectors and takes Chinese character stroke decompositions as inputs.” More clearly, the goal of this next Python example is to use stroke decompositions of Chinese characters to create feature vectors, and then find the cosine similarity of those two feature vectors. Having spent many semesters in my undergrad studying Chinese and over 6 years living and working in China, Chinese has become my second language and is somewhat of a fascination of mine. Before explaining further, it’s important to understand a little bit about how the Chinese writing system works.
 
-Basically, there are 33 basic constituents or “strokes” that can be used to build any given Chinese character. These strokes are written and combined in a specific order. When a character’s strokes are put into a list in order of how they are written this is called a “stroke decomposition”. Since each character is a unique combination of strokes and the lists are ordered, this means a character’s stroke decomposition can be looked at like a “signature”.For example, the character 来 (lái) which means “come” breaks down to `["一", "丨", "八", "一", "丷"]` whereas 请 (qíng) meaning “please” breaks down to `["㇊", "丶", "龶", "冂", "二"]`. I decided that if these unique signatures could be ascribed numerical values, one might be able to do something useful with them. Mindful that I had only an hour and a half to implement this, I achieved this by creating a toy integer encoding table, like this:
-
-```
-stroke_encodings = {
-        "冖": 1,
-        "丶": 2,
-        "㇛": 3,
-        "一": 4,
-        "丿": 5,
-        "丨": 6,
-        "八": 7,
-        "丷": 8,
-        "龶": 9,
-        "冂": 10,
-        "二": 11,
-        "㇊": 12,
-    }
-```
-
-I wanted to implement a more complex encoding scheme (maybe one-hot encoding?) but I didn’t have time. Here is the first implementation of my idea along with some tests:
+Basically, there are 33 basic constituents or “strokes” that can be used to build any given Chinese character. These strokes are written and combined in a specific order. When a character’s strokes are put into a list in order of how they are written this is called a “stroke decomposition”. Since each character is a unique combination of strokes and the lists are ordered, this means a character’s stroke decomposition can be looked at like a “signature”.For example, the character 来 (lái) which means “come” breaks down to `["一", "丨", "八", "一", "丷"]` whereas 请 (qíng) meaning “please” breaks down to `["㇊", "丶", "龶", "冂", "二"]`. I decided that if these unique signatures could be ascribed numerical values, one might be able to do something useful with them. Mindful that I had only an hour and a half to implement this, I achieved this by creating a toy integer encoding table. I wanted to implement a more complex encoding scheme (maybe one-hot encoding?) but I didn’t have time. Here is the first implementation of my idea along with some tests:
 
 ```python
 def find_magnitude(vector: list[float]) -> float:
