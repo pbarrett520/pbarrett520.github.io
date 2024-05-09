@@ -103,7 +103,7 @@ In improv theatre, there is a simple adage of “Yes, and…”. This basically 
 
 Basically, there are 33 basic constituents or “strokes” that can be used to build any given Chinese character. These strokes are written and combined in a specific order. When a character’s strokes are put into a list in order of how they are written this is called a “stroke decomposition”. Since each character is a unique combination of strokes and the lists are ordered, this means a character’s stroke decomposition can be looked at like a “signature”.For example, the character 来 (lái) which means “come” breaks down to `["一", "丨", "八", "一", "丷"]` whereas 请 (qíng) meaning “please” breaks down to `["㇊", "丶", "龶", "冂", "二"]`. I decided that if these unique signatures could be ascribed numerical values, one might be able to do something useful with them. Mindful that I had only an hour and a half to implement this, I achieved this by creating a toy integer encoding table, like this:
 
-```python
+```
 stroke_encodings = {
         "冖": 1,
         "丶": 2,
