@@ -18,28 +18,25 @@ Location: Dacula, GA | Contact: 404-632-0556 | Email: pbarrett520@yahoo.com
 
 ---
 
-I am a linguist and educator driven by a passion to blend traditional language learning with modern technology, creating dynamic educational tools. My career has spanned continents and disciplines, imbuing me with a profound ability to navigate diverse cultural and technical landscapes.
+When not demonstrating tech products or strategizing client relations, I dive deep into the world of coding, with a special focus on Natural Language Processing (NLP). My background as a linguist and educator, combined with a passion for integrating traditional language learning with cutting-edge technology, equips me with a unique perspective in both developing and showcasing technological solutions. This dual expertise enables me to understand and convey product value in a way that resonates deeply with diverse audiences.
 
 **Professional Journey:**  
-Having spent six transformative years in China, including during Zero COVID and the Shanghai lockdown of 2022, I have cultivated advanced leadership skills, managing diverse teams and projects in challenging environments. My tenure in China was marked by significant improvements for teams in language learning outcomes under my leadership, demonstrating my capacity to effectively bridge cultural divides.
+My six years in China, including the challenging period of Zero COVID and the Shanghai lockdown in 2022, honed my leadership skills and ability to manage diverse teams in dynamic environments. In China, I not only improved language learning outcomes but also successfully bridged cultural divides through innovative educational practices.
 
-During my time with Zmack! Consulting in Shanghai, I led the development of AI-driven software tools for an innovative improvised comedy show. This project involved designing and implementing software that integrated advanced language models to enhance live performances, showcasing my ability to apply AI technologies creatively and effectively in real-time environments.
+At Zmack! Consulting in Shanghai, I spearheaded the development of AI-driven tools for an improvised comedy show, blending advanced language models with live entertainment. This experience underscored my capability to creatively and effectively apply AI technologies in real-time settings.
 
-**Technical Proficiencies:**
-- Skilled in leveraging technology to solve complex problems and enhance user experiences in educational settings.
-
-- Experienced in the strategic application of programming tools to develop and optimize both educational and entertainment software.
+**Technical and Sales Proficiencies:**
+- Expert in leveraging technology to solve complex problems and enhance user experiences, particularly in educational and client-facing settings.
+- Skilled in tech sales, with a proven track record of managing client relationships across multicultural environments, ensuring satisfaction and fostering long-term engagement.
 
 **Areas of Expertise:**
-- **Natural Language Processing:** I specialize in developing software solutions for problems that require extensive backgound expertise in the field of Linguistics. I have experience with both neural and rules-based approaches to tasks like text generation, text-to-speech, sentiment analysis, tokenization, and more.
-
-- **Education:** Dedicated to enhancing the learning process through innovative teaching methods and educational practices that make learning accessible and effective for diverse populations. I aspire to leverage my skills in NLP to create technologies that make education easier for both teachers and their students.
-
-- **Leadership in Multicultural Environments:** Proven success in leading multicultural teams, driving project success through innovative strategies and inclusive leadership.
+- **Natural Language Processing:** Specializing in developing and promoting NLP software solutions, with hands-on experience in neural and rules-based methods for text generation, text-to-speech, sentiment analysis, tokenization, and more.
+- **Education:** Committed to transforming the learning process through innovative methods that make education accessible and effective for diverse student populations.
+- **Sales and Client Relations in Multicultural Environments:** Demonstrated excellence in navigating multicultural settings, driving project success and client satisfaction through tailored strategies and inclusive leadership.
 
 **Education:**
 - **Master of Science in Human Language Technology,** University of Arizona, Tucson, AZ
 - **Bachelor of Arts in Applied Linguistics,** Georgia State University (Summa Cum Laude), Atlanta, GA
 
-My goal is to merge cutting-edge technology with educational practices to globally enhance educational outcomes. I invite you to explore my [portfolio](https://pbarrett520.github.io/portfolio/) to understand the depth and breadth of my projects and their impact on the field of education.
+I invite you to explore my [portfolio](https://pbarrett520.github.io/portfolio/) to discover the depth and impact of my projects in the NLP and education fields, and how that informs my ability in the doamin of tech sales.
 
