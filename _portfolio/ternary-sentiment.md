@@ -79,7 +79,7 @@ Pressed for time, what I wound up doing was creating a good 'ol Naive Bayes mode
 
 I knew that to get better performance with Naive Bayes, I'd need to look carefully at how the data is tokenized. The first thing I did to address this was use NLTK's TweetTokenizer. Why? I intuit that the domains of Tweets and online movie reviews likely have much in common. This tokenizer accounts for irregularities that may appear in casual, short form prose posted online. Therefore, it was my suspicion that this tokenizer built specifically for this purpose would offer better performance that just splitting the data in a more generic fashion.
 
-Next, I decided to de-case and lemmatize the text. Case may be a usefule feature for sentiment analysis of datsets with with lots of ANGRY ALL CAPS, but I don't think that outweighs normal use of case in this dataset. So, it seemed better to normalize the case. As for lemmatization, here was my approach:
+Next, I decided to de-case and lemmatize the text. Case may be a useful feature for sentiment analysis of datsets with with lots of ANGRY ALL CAPS, but I don't think that outweighs normal use of case in this dataset. So, it seemed better to normalize the case. As for lemmatization, here was my approach:
 
 ```python3
 pos_tags = pos_tag(tokens)
