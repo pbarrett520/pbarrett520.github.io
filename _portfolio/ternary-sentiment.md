@@ -1,5 +1,5 @@
 ---
-title: "Misadventures with Neural Networks and Settiling on Naive Bayes"
+title: "Misadventures with Neural Networks and Settling on Naive Bayes"
 excerpt: <br/><img src='https://pbarrett520.github.io/images/neural-vs-nb.png'>
 collection: portfolio
 ---
