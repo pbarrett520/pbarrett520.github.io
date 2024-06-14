@@ -9,7 +9,7 @@ All code related to this project can be found [here](https://github.com/pbarrett
 
 ## Task
 
-The task is to take a heterogenous data set, a mixture of documents which are movie reviews and some which are not, and implepent a system of ternary classificiation. Non-reviews recieve the tag 0, postive movie reviews recieve the tag 1, and negative 2. So really, there are two different classification tasks going on here. The first is to discriminate between reviews and non-reviews. The second is to tell apart positive and negative reviews. And of course, the model should have a high F1 and accuracy score, while still generalizing well.
+The task is to take a heterogenous data set, a mixture of documents which are movie reviews and some which are not, and implement a system of ternary classificiation. Non-reviews recieve the tag 0, postive movie reviews recieve the tag 1, and negative 2. So really, there are two different classification tasks going on here. The first is to discriminate between reviews and non-reviews. The second is to tell apart positive and negative reviews. And of course, the model should have a high F1 and accuracy score, while still generalizing well.
 
 ## The Approach That Didn't Work
 
@@ -71,7 +71,7 @@ def distilbert_sent2(text):
         return (sentiment_labels[2], predicted_score)
 
 ```
-I won't bother to show the whole notebook containing this spiral into insanity, as it didn't work and was ultimately a waste of my time. But basically, the idea was to use a binary classifier, run it on the data set, take the confidence values it returns, and either use the average of the confidence values as a threshold to identify a neutral text, or use use a minimum and maximum threshold to classify a "neutral" text. A fatal flaw in this approach is my false belief that there were neutral movie reviews in the data set, which was not the case. That's what I get for reading the directions once a month ago then never looking again. Despite this method not working, I felt compelled to mention it, since I spent most of my time one it, fruitlessly.
+I won't bother to show the whole notebook containing this spiral into insanity, as it didn't work and was ultimately a waste of my time. But basically, the idea was to use a binary classifier, run it on the data set, take the confidence values it returns, and either use the average of the confidence values as a threshold to identify a neutral text, or use a minimum and maximum threshold to classify a "neutral" text. A fatal flaw in this approach is my false belief that there were neutral movie reviews in the data set, which was not the case. That's what I get for reading the directions once a month ago then never looking again. Despite this method not working, I felt compelled to mention it, since I spent most of my time one it, fruitlessly.
 
 ## The Approach That *Did* Work
 
